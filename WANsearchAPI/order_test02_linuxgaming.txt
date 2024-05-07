@@ -1,0 +1,37 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /search                   --> WANsearchAPI/handlers.GetVideos (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Environment variable PORT is undefined. Using port :8080 by default
+[GIN-debug] Listening and serving HTTP on :8080
+fetchTitle took 888.277µs
+cosineSimilarityDocs took 2.305238ms
+fetchTermPositions took 243.523µs
+distanceScore took 247ns
+distanceScore took 186ns
+distanceScore took 218ns
+distanceScore took 221ns
+distanceScore took 410ns
+distanceScore took 154ns
+distanceScore took 157ns
+distanceScore took 148ns
+distanceScore took 144ns
+distanceScore took 137ns
+fetchTimeStamps took 2.191101ms
+fetchDialogueFromTimeStamps took 151.867µs
+fetchDialogueFromTimeStamps took 62.703103ms
+fetchDialogueFromTimeStamps took 166.835µs
+fetchDialogueFromTimeStamps took 30.319447ms
+fetchDialogueFromTimeStamps took 137.104µs
+fetchDialogueFromTimeStamps took 60.514µs
+************************************************************
+map[-SLaZd2f_mI:0 JjHCiXQqirg:0 KcQQdpaOmDs:0 L__F-PBIruE:0 Luz82RG5PqA:0 OeRa1St6KtM:0 Qt4x6HQPoow:0 it5bE6cPz6U:0 rXHSbIS2lLs:0 sb5GlR3pjt8:0]
+[Qt4x6HQPoow rXHSbIS2lLs KcQQdpaOmDs L__F-PBIruE Luz82RG5PqA OeRa1St6KtM]
+[{Qt4x6HQPoow [{1377s we did the linux challenge we didn't} {1380s take help from linux community members} {1388s think about the way that the linux} {1390s community wants to promote linux and} {1397s promote linux which is a big reason why} {1409s eyes were on the linux challenge how} {1412s much support the linux community would} {1689s on linux convert them on the fly as you} {1691s are gaming them are gaming them as you} {1706s of d3 d9 d3 d10 and d3 d11 yeah linux} {1710s slash wine for linux slash wine slash} {1717s linux api hackery} {2462s um a a newer like 1440p gaming monitor} {2646s was using them as surrounds for gaming} {3436s electronics smart home and gaming} {3468s you can save on gift cards for gaming} {3548s it's odd did you know gaming has} {3585s did you know gaming told kotaku that} {3663s now did you know gaming also told kotaku} {3718s you know gaming though yes it's not} {3720s digital gaming themselves exactly did} {3722s you know gaming is just doing what} {3767s know gaming did nothing wrong here yeah} {3781s did you know gaming has been poking and} {3820s be the most hated company in gaming uh} {4340s companies in gaming that have done} {5490s gaming experiences and i think we've} {6566s linux challenge thing before so that} {665s to pay to get their gaming fix if} {7074s non-computer gaming activities like we} {7348s stuff gaming at different frame rates so} {9990s gaming}] I Want To Smuggle CPUs - WAN Show December 9 2022} {rXHSbIS2lLs [{2386s of gaming history that in the same way} {2404s going to be part of gaming history due} {5210s in my experience linux has had that just} {5215s problem with a network driver on linux} {5554s like xbox gaming related software on a} {5730s access to online gaming in order for me} {6094s while developing linux for m1 it has} {6141s nvme ssd on linux} {7411s the various handheld gaming pcs} {914s somebody else's gaming device}] Valve's Making Everyone Else Look Bad - WAN Show February 18 2022} {KcQQdpaOmDs [{2251s to do your development in a linux} {2405s are from the gaming world uh we've} {2523s the gaming community went through this} {2687s time and effort into making these gaming} {989s check out check out linux as well when}] AMD Mobile CPUs - 200% FASTER!! - WAN Show October 27 2017} {L__F-PBIruE [{1070s to competitive gaming like when you're} {2843s gaming experience not full of cs go} {3329s linux} {3784s posted by how to gaming uh on the forum} {5223s so this was originally posted by a linux}] The WAN Show - Ubi Digs & Dreamhack is a joke with CS:Go as the Punchline - November 28 2014} {Luz82RG5PqA [{7177s your gaming class cards and then you've} {7237s have a bad gaming computer yeah i} {7317s gaming pc all right but yeah exactly i} {8721s um with both the linux challenge and} {995s container actually it's a it's a linux}] Why Do I Keep Getting Called Out - WAN Show December 2 2022} {OeRa1St6KtM [{1204s gaming space which is} {383s from like a consumer or gaming} {391s gaming and enthusiast community people} {4089s own gaming pc} {415s like a gaming graphics card} {4381s linux and firefox mechanical engineering} {668s was like someone found some linux code} {951s linux code around multi gpu}] Intel's Graphics Card Leaks Look TERRIBLE... - WAN Show Dec 27 2019}]
+************************************************************
+[GIN] 2024/05/07 - 18:39:13 | 200 |  118.442451ms |       127.0.0.1 | GET      "/search?q=linux%20gaming"
