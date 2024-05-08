@@ -1,18 +1,14 @@
 <script>
   import VideoCard from "./video_card.svelte";
   import TutorialCard from "./tutorial_card.svelte";
-  import { fade } from 'svelte/transition';
-  
 
   let query = "";
-  let doc;
-  let response;
   let responseGetting = false;
   let responseGot = false;
   let searchDone = true;
+  let isNullResult = false;
   let fdata;
 
-  let msg = "Click the button to fetch data";
 
   let videos = [];
 
@@ -21,21 +17,29 @@
     responseGetting = true;
     responseGot = false;
 
-    msg = "Waiting...";
 
-    let query_ = query.replaceAll(" ", "%20");
-
-    const response = await fetch(`https://api.wansearch.xyz/search?q=${query}`);
+    const response = await fetch(`http://localhost:8080/search?q=${query}`);
     if (response.ok) {
       const jsonData = await response.json();
       fdata = jsonData;
-      videos = fdata.map((video) => ({
+
+      if (fdata == null ){
+        isNullResult = true;
+       
+      responseGot = true;
+
+      }else{
+        isNullResult = false
+        
+        videos = fdata.map((video) => ({
         id: video.Video_id,
         title: video.Title,
-        // dialogues: video.TimedDialogues,
+        
         diloguesMap : video.TimeDialogues2
       }));
-      msg = "Done.";
+      }
+    
+    
       
       responseGot = true;
     } else {
@@ -75,11 +79,19 @@
     </div>
   {/if}
 
+  {#if !isNullResult}
   {#each videos as video}
     <VideoCard video={video} query={query} />
     <!-- <p>{video.id}</p>
   <img src="https://img.youtube.com/vi/{video.id}/0.jpg" alt=""> -->
   {/each}
+
+  {:else}
+
+  <span>No result found</span>
+  {/if}
+
+
 {:else}
   <p></p>
 {/if}
@@ -134,8 +146,13 @@
     padding: 0.2em;
     padding-right: 1.2em;
     padding-left: 1em;
+    
 
     border-radius: 2em;
+  }
+
+  .search-button {
+    margin-bottom: 1.1em;
   }
 
 

@@ -40,15 +40,15 @@ func Videos(query string) []Video {
 	}
 
 	query = sanitizeQuery(query)
-	query_words := queryWordsSlice(query)
+	queryWords := queryWordsSlice(query)
 
-	query_words_tf := computeTF(query_words)
+	queryWordsTF := computeTF(queryWords)
 
-	documentsToSearch := fetchDocumentsMatchingTerms(query_words, db)
+	documentsToSearch := fetchDocumentsMatchingTerms(queryWords, db)
 
 	documentsMatchingAllTerms := intersection(documentsToSearch)
 
-	videos := matchingVideos(&documentsMatchingAllTerms, query_words_tf, query_words, db)
+	videos := matchingVideos(&documentsMatchingAllTerms, queryWordsTF, queryWords, db)
 
 	return videos
 }
@@ -125,8 +125,10 @@ func quotedVideos(query string, db *sql.DB) []Video {
 func sanitizeQuery(query string) string {
 	// defer timer("sanitizeQuery")()
 
+	// Remove punctuation marks
 	regForPunctuations, _ := regexp.Compile("[^a-zA-Z0-9]+")
 
+	// Everything in the db is lower case (Except titles)
 	return strings.ToLower(regForPunctuations.ReplaceAllString(query, " "))
 
 }
@@ -331,6 +333,8 @@ func fetchDocumentsMatchingTerms(query_words []string, db *sql.DB) [][]string {
 
 }
 
+// From https://stackoverflow.com/a/45766707/18168569
+// Purely for testing
 func timer(name string) func() {
 	start := time.Now()
 	return func() {
@@ -485,8 +489,9 @@ func matchingVideos(docsToSearch *[]string, queryVector map[string]float64, quer
 
 	documentsWithValueSortedMap, documentsWithValueSorted := sortDocumentsByValue(documentsWithValue)
 
-	documentsWithValueFar := make(map[string]float64)
+	documentsWithValueSortedWeitghted := make(map[string]float64)
 
+	// Top 10 documents are then weighted further
 	if len(documentsWithValueSorted) > 10 {
 
 		documentsWithValueSorted = documentsWithValueSorted[:10]
@@ -511,22 +516,23 @@ func matchingVideos(docsToSearch *[]string, queryVector map[string]float64, quer
 
 		score += tw
 
-		documentsWithValueFar[doc] = score
+		documentsWithValueSortedWeitghted[doc] = score
 
 	}
 
-	_, documentsWithValueFarSorted := sortDocumentsByValue(documentsWithValueFar)
+	_, finalDocuments := sortDocumentsByValue(documentsWithValueSortedWeitghted)
 
 	var finalVideos []Video
 
-	if len(documentsWithValueFarSorted) > 6 {
+	// Only need to fetch time stamps and dialogues for the final set of documents for performance
+	if len(finalDocuments) > 6 {
 
-		documentsWithValueFarSorted = documentsWithValueFarSorted[:6]
+		finalDocuments = finalDocuments[:6]
 	}
 
 	documentsWithTimesMap := fetchTimeStamps(db, queryWords, docsToSearch) //doc : timestamps of all terms in query within doc group by term
 
-	for _, video := range documentsWithValueFarSorted {
+	for _, video := range finalDocuments {
 
 		dialoguesWithWordInDocument := fetchDialogueFromTimeStamps(db, &video, documentsWithTimesMap[video])
 
@@ -606,10 +612,14 @@ func fetchLengthOfDocument(db *sql.DB, document string) int {
 
 	tfs, err := stmt.Query(document)
 
+	checkError(err)
+
 	for tfs.Next() {
 		err = tfs.Scan(&length)
+		checkError(err)
 	}
 	n, err := strconv.Atoi(length)
+	checkError(err)
 
 	return n
 
@@ -655,6 +665,9 @@ func findClosestFromTwoSlicec(list1 []int, list2 []int) int {
 
 			c := n2 - n1
 
+			// c < 0 since the slice is already sorted no need to look further,
+			// n2 < startNum since should only look for the second word after the first appearance of first word
+
 			if c < 0 || n2 < startNum {
 				break
 			}
@@ -671,7 +684,7 @@ func findClosestFromTwoSlicec(list1 []int, list2 []int) int {
 
 func commaSeparatedToIntSlice(str string) []int {
 	// defer timer("commaSeparatedToIntSlice")()
-	//
+
 	var result []int
 
 	result = make([]int, 0, len(str)+1)
@@ -749,7 +762,6 @@ func fetchDialogueFromTimeStamps(db *sql.DB, document *string, timeStamps string
 func fetchTimeStamps(db *sql.DB, words []string, documents *[]string) map[string]string {
 	// defer timer("fetchTimeStamps")()
 
-	//
 	var timeStamps string
 	var doc string
 

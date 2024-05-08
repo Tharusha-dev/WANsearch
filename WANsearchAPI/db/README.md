@@ -1,7 +1,9 @@
 # SQLite Database structure
-The latest version of the SQLite database file can be downloaded here.
+The latest version (WAN Show April 5, 2024) of the SQLite database file can be downloaded [here](https://drive.google.com/file/d/1Uu2ya1sI1U1IBI0UWmIxWnxcYJuzC5O_/view?usp=sharing).
 
 All of these data were gathered using [yt-dlp](https://github.com/yt-dlp/yt-dlp), and computed using python with the help of [scikit-learn](https://scikit-learn.org)
+
+Using yt-dlp auto generated English substitle files were downloaded.
 
 ## Tables 📊
 

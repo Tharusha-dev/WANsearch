@@ -54,6 +54,9 @@
 
   .github-icon {
     height: 4vh;
+    margin-right: 0.5em;
+  margin-top: 0.5em;
+
 
   }
 

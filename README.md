@@ -12,7 +12,8 @@ Written in Golang using [Gin](https://gin-gonic.com/).
 
 ## Database
 
-Using a SQLite database and the [driver by mattn.](https://github.com/mattn/go-sqlite3)
+Using a SQLite database and the [driver by mattn](https://github.com/mattn/go-sqlite3).
+
 [More info](https://github.com/Tharusha-dev/WANsearch/blob/main/WANsearchAPI/db/README.md).
 
 ## How it works
@@ -26,10 +27,17 @@ The algorithm currently uses these techniques to rank documents. (in this order)
 
 When retrieving relevent documents,
 
-And uses a simple `LIKE` sql statement in [all_dialogues](https://github.com/Tharusha-dev/WANsearch/blob/main/WANsearchAPI/db/README.md) table for quoted search. 
+And uses a simple `LIKE` sql statement in [all_dialogues](https://github.com/Tharusha-dev/WANsearch/blob/main/WANsearchAPI/db/README.md#all_dialogues) table for quoted search. 
 
 ## Infrastucture
 
 Frontend is hosted in Cloudflare pages.
+
 The API is running in EC2. Uses Cloudflare proxy.
+
+## Know issues
+
+### Speed when searching by relevance
+
+The bottleneck is the database, I tried indexing a bunch of stuff but this is as fast as i could make it. If anyone have any suggestions to make reads faster, I'm all ears.
 
