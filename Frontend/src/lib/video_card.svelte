@@ -3,7 +3,7 @@
     export let query;
 
     function decorateDialogue(dialogue, query) {
-        let queryWords = query.trim().split(/\b/);
+        let queryWords = query.toLowerCase().trim().split(/\b/);
 
         dialogue = '<span class="dialogue">' + dialogue + "</span>";
 
