@@ -20,7 +20,7 @@ func QuotedVideos(query string) []Video {
 
 	var videos []Video
 
-	query = strings.ReplaceAll(query, `"`, ``)
+	query = removeQuotes(query)
 
 	stmt, err := db.Prepare("select video_id from all_dialogues where words like ?")
 
@@ -58,4 +58,11 @@ func QuotedVideos(query string) []Video {
 
 	return videos
 
+}
+
+func removeQuotes(s string) string {
+	s = strings.ReplaceAll(s, `"`, "")
+	s = strings.ReplaceAll(s, `“`, "")
+	s = strings.ReplaceAll(s, `”`, "")
+	return s
 }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"WANsearchAPI/utils"
+	"regexp"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,7 @@ func GetVideos(c *gin.Context) {
 	query = strings.TrimPrefix(query, " ")
 
 	if isQuotedSearch(query) {
+
 		videos = utils.QuotedVideos(query)
 	} else {
 		videos = utils.Videos(query)
@@ -28,13 +30,9 @@ func GetVideos(c *gin.Context) {
 func isQuotedSearch(query string) bool {
 
 	query = strings.ToLower(strings.TrimSuffix(query, " "))
-	characters := strings.Split(query, "")
 
-	if characters[0] == `"` && characters[len(characters)-1] == `"` {
-		return true
+	match, _ := regexp.MatchString(`^["“][^"]*["”]$`, query)
 
-	} else {
-		return false
-	}
+	return match
 
 }
