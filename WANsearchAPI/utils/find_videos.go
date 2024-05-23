@@ -389,7 +389,7 @@ func fetchTitle(documents []string, db *sql.DB) map[string]string {
 
 	placeholders, args := prepareForInStatement(documents)
 
-	stmt, err := db.Prepare("SELECT vid_id,title FROM video_titles WHERE vid_id in" + placeholders)
+	stmt, err := db.Prepare("SELECT video_id,title FROM video_titles WHERE video_id in" + placeholders)
 
 	if err != nil {
 		log.Fatal(err)
@@ -578,7 +578,7 @@ func fetchTermPositions(db *sql.DB, documents []string, queryWords []string) map
 
 	video_id_placeholders, video_id_args := prepareForInStatement(documents)
 
-	stmt, err := db.Prepare(`select video_id,terms,positions from term_positions Where video_id in ` + video_id_placeholders + `and terms in ` + terms_placeholders)
+	stmt, err := db.Prepare(`select video_id,term,positions from term_positions Where video_id in ` + video_id_placeholders + `and term in ` + terms_placeholders)
 
 	checkError(err)
 	allArgs := append(video_id_args, terms_args...)

@@ -18,7 +18,7 @@
     responseGot = false;
 
 
-    const response = await fetch(`https://api.wansearch.xyz/search?q=${query}`);
+    const response = await fetch(`http://localhost:8080/search?q=${query}`);
     if (response.ok) {
       const jsonData = await response.json();
       fdata = jsonData;

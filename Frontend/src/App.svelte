@@ -1,7 +1,14 @@
 <script>
   import Input from "./lib/Input.svelte";
   import Footer from "./lib/footer.svelte";
+ 
 </script>
+
+<svelte:head>
+        <title>WANsearch</title>
+        <meta name="description" content='A fan-made search engine for "The WAN show" podcast by LMG. Find related videos as well as time stamps for a search' />
+</svelte:head>
+
 
 <main>
   <h1>WANsearch</h1>
