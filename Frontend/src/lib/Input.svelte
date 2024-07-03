@@ -1,13 +1,17 @@
 <script>
   import VideoCard from "./video_card.svelte";
   import TutorialCard from "./tutorial_card.svelte";
+  import CountsCard from "./counts_card.svelte";
 
   let query = "";
   let responseGetting = false;
   let responseGot = false;
   let searchDone = true;
   let isNullResult = false;
+  let isQuotedSearch = false;
   let fdata;
+  let videosJson;
+  let countsJson;
 
 
   let videos = [];
@@ -22,8 +26,17 @@
     if (response.ok) {
       const jsonData = await response.json();
       fdata = jsonData;
+      videosJson = jsonData.Videos
+      
+      countsJson = jsonData.Counts
 
-      if (fdata == null ){
+      if (countsJson ==  null){
+      
+          isQuotedSearch = true
+      }
+      
+
+      if (videosJson == null ){
         isNullResult = true;
        
       responseGot = true;
@@ -31,12 +44,15 @@
       }else{
         isNullResult = false
         
-        videos = fdata.map((video) => ({
+        videos = videosJson.map((video) => ({
         id: video.Video_id,
         title: video.Title,
         
         diloguesMap : video.TimeDialogues2
       }));
+
+   
+
       }
     
     
@@ -58,7 +74,7 @@
   >
     <path
       d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
-      stroke="#fc4c0a"
+      stroke="white"
       stroke-width="1"
       stroke-linecap="round"
       stroke-linejoin="round"
@@ -68,7 +84,7 @@
 </div>
 
 <br />
-<button  class="search-button" on:click={getDocument}> Dan, hit us! </button>
+<button  class="search-button" on:click={getDocument}> Search </button>
 
 <br />
 
@@ -80,10 +96,16 @@
   {/if}
 
   {#if !isNullResult}
+  {#if responseGot}
+
+  {#if !isQuotedSearch}
+  <CountsCard counts={countsJson}/>
+  {/if}
+  {/if}
   {#each videos as video}
+      
     <VideoCard video={video} query={query} />
-    <!-- <p>{video.id}</p>
-  <img src="https://img.youtube.com/vi/{video.id}/0.jpg" alt=""> -->
+
   {/each}
 
   {:else}
@@ -115,7 +137,7 @@
 
   .loader {
     border: 0.2em solid #f3f3f3; /* Light grey */
-    border-top: 0.2em solid #fc4c0a; /* Blue */
+    border-top: 0.2em solid white; /* Blue */
     border-radius: 50%;
     width: 2em;
     height: 2em;

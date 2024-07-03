@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func QuotedVideos(query string) []Video {
+func QuotedVideos(query string) Response {
 
 	db := ConnectionToDB()
 
@@ -22,11 +22,13 @@ func QuotedVideos(query string) []Video {
 
 	query = removeQuotes(query)
 
-	stmt, err := db.Prepare("select video_id from all_dialogues where words like ?")
+	stmt, err := db.Prepare("select video_id from all_dialogues where dialogues like ?")
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println(fmt.Sprintf("%%%s%%", query))
 
 	documents, err := stmt.Query(fmt.Sprintf("%%%s%%", query))
 
@@ -56,7 +58,7 @@ func QuotedVideos(query string) []Video {
 
 	}
 
-	return videos
+	return Response{Videos: videos, Counts: nil}
 
 }
 

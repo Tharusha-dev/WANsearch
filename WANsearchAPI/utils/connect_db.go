@@ -6,7 +6,7 @@ import (
 )
 
 func ConnectionToDB() *sql.DB {
-	db, err := sql.Open("sqlite3", "../WANsearchAPI/db/main.db")
+	db, err := sql.Open("sqlite3", "../searchYardAPI/db/wan_show_main.db")
 
 	if err != nil {
 		log.Fatal(err)

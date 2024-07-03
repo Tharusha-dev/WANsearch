@@ -27,7 +27,12 @@ type TimeDialogue struct {
 	Dialogue string
 }
 
-func Videos(query string) []Video {
+type Response struct {
+	Videos []Video
+	Counts map[string]int
+}
+
+func Videos(query string) Response {
 
 	db := ConnectionToDB()
 
@@ -49,8 +54,9 @@ func Videos(query string) []Video {
 	documentsMatchingAllTerms := intersection(documentsToSearch)
 
 	videos := matchingVideos(&documentsMatchingAllTerms, queryWordsTF, queryWords, db)
+	counts := fetchCounts(db, queryWords)
 
-	return videos
+	return Response{Videos: videos, Counts: counts}
 }
 
 func checkError(err error) {
@@ -74,7 +80,7 @@ func isQuotedSearch(query string) bool {
 
 }
 
-func quotedVideos(query string, db *sql.DB) []Video {
+func quotedVideos(query string, db *sql.DB) Response {
 
 	var videoId string
 
@@ -84,7 +90,7 @@ func quotedVideos(query string, db *sql.DB) []Video {
 
 	query = strings.ReplaceAll(query, `"`, ``)
 
-	stmt, err := db.Prepare("select video_id from all_dialogues where words like ?")
+	stmt, err := db.Prepare("select video_id from all_dialogues where dialogue like ?")
 
 	if err != nil {
 		log.Fatal(err)
@@ -118,7 +124,7 @@ func quotedVideos(query string, db *sql.DB) []Video {
 
 	}
 
-	return videos
+	return Response{Videos: videos, Counts: nil}
 
 }
 
@@ -347,7 +353,7 @@ func fetchTitleFromId(document *string, db *sql.DB) string {
 
 	var title string
 
-	stmt, err := db.Prepare("SELECT title FROM video_titles WHERE vid_id=?")
+	stmt, err := db.Prepare("SELECT title FROM video_titles WHERE video_id=?")
 
 	if err != nil {
 		log.Fatal(err)
@@ -470,7 +476,7 @@ func matchingVideos(docsToSearch *[]string, queryVector map[string]float64, quer
 	video_id_placeholders, video_id_args := prepareForInStatement(*docsToSearch)
 	terms_placeholders, terms_args := prepareForInStatement(queryWords)
 
-	stmt, err := db.Prepare("Select video_id, term, tfidf,magnitude From all_episodes_tfidf_count Where video_id IN  " + video_id_placeholders + "and term in " + terms_placeholders + "order by video_id")
+	stmt, err := db.Prepare("Select video_id, term, tfidf,magnitude From term_tfidf_magnitude Where video_id IN  " + video_id_placeholders + "and term in " + terms_placeholders + "order by video_id")
 
 	checkError(err)
 
@@ -497,20 +503,20 @@ func matchingVideos(docsToSearch *[]string, queryVector map[string]float64, quer
 		documentsWithValueSorted = documentsWithValueSorted[:10]
 	}
 
-	videoTermPositions := fetchTermPositions(db, documentsWithValueSorted, queryWords)
+	// videoTermPositions := fetchTermPositions(db, documentsWithValueSorted, queryWords)
 
 	for _, doc := range documentsWithValueSorted {
 
 		score := documentsWithValueSortedMap[doc]
 
-		ds := distanceScore(db, videoTermPositions, doc, queryWords)
+		// ds := distanceScore(db, videoTermPositions, doc, queryWords)
 
-		if ds > score {
-			score = 0
-		} else {
-			score -= ds
+		// if ds > score {
+		// 	score = 0
+		// } else {
+		// 	score -= ds
 
-		}
+		// }
 
 		tw := titleWeight(queryWords, sanitizeTitle(vidTitlesMap[doc]))
 
@@ -618,7 +624,9 @@ func fetchLengthOfDocument(db *sql.DB, document string) int {
 		err = tfs.Scan(&length)
 		checkError(err)
 	}
-	n, err := strconv.Atoi(length)
+	last := strings.Split(length, ",")[0]
+	// fmt.Println(last)
+	n, err := strconv.Atoi(last)
 	checkError(err)
 
 	return n
@@ -626,8 +634,8 @@ func fetchLengthOfDocument(db *sql.DB, document string) int {
 }
 
 func distanceScore(db *sql.DB, videoTermPositions map[string]map[string][]int, document string, queryWords []string) float64 {
-	// defer timer("distanceScore")()
 
+	// defer timer("distanceScore")()
 	lenOfDoc := fetchLengthOfDocument(db, document)
 
 	var score float64
@@ -638,6 +646,10 @@ func distanceScore(db *sql.DB, videoTermPositions map[string]map[string][]int, d
 		posList1 := videoTermPositions[document][queryWords[j]]
 		posList2 := videoTermPositions[document][queryWords[j+1]]
 
+		if len(posList1) == 0 || len(posList2) == 0 {
+
+			continue
+		}
 		c := findClosestFromTwoSlicec(posList1, posList2)
 		score += float64(c)
 
@@ -652,15 +664,18 @@ func findClosestFromTwoSlicec(list1 []int, list2 []int) int {
 
 	// defer timer("getClosestFromTwoSlicec")()
 
-	close := 100000 // large number
+	close := 10000000 // large number
 
 	if len(list1) == 0 {
+		fmt.Println("er")
 		return close
 	}
 
 	startNum := list1[0]
+	// fmt.Println(list1, list2)
 
 	for _, n2 := range list2 {
+
 		for _, n1 := range list1 {
 
 			c := n2 - n1
@@ -669,6 +684,7 @@ func findClosestFromTwoSlicec(list1 []int, list2 []int) int {
 			// n2 < startNum since should only look for the second word after the first appearance of first word
 
 			if c < 0 || n2 < startNum {
+
 				break
 			}
 
@@ -780,6 +796,8 @@ func fetchTimeStamps(db *sql.DB, words []string, documents *[]string) map[string
 
 	checkError(err)
 
+	defer tfs.Close()
+
 	for tfs.Next() {
 		err = tfs.Scan(&doc, &timeStamps)
 		if err != nil {
@@ -791,5 +809,43 @@ func fetchTimeStamps(db *sql.DB, words []string, documents *[]string) map[string
 	}
 
 	return documentsTimeStampsMap
+
+}
+
+func fetchCounts(db *sql.DB, queryWords []string) map[string]int {
+	defer timer("fetchCount")()
+
+	term_placeholders, term_args := prepareForInStatement(queryWords)
+
+	var term string
+	var count string
+	termsCount := make(map[string]int)
+
+	stmt, err := db.Prepare("select term,sum(count) as sum_count from term_count where term in" + term_placeholders + "group by term")
+
+	checkError(err)
+
+	// allArgs := append(term_args, video_id_args...)
+
+	tfs, err := stmt.Query(term_args...)
+
+	checkError(err)
+	defer tfs.Close()
+
+	for tfs.Next() {
+		err = tfs.Scan(&term, &count)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		n, err := strconv.Atoi(count)
+
+		checkError(err)
+
+		termsCount[term] = n
+
+	}
+
+	return termsCount
 
 }

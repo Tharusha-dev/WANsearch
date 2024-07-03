@@ -1,5 +1,5 @@
 <div class="footer">
-    <span>This website is still in beta.</span>
+    
     <span style="display: flex;align-items: center;justify-content: center;">Made with&nbsp;
         <svg
             width="1.5vh"
@@ -18,7 +18,7 @@
             href="https://www.linkedin.com/in/tharusha-jayasooriya-1540b52aa/"
             target="_blank">&nbsp;Tharusha</a
         ></span>
-        <span style="color:  #a3a3a3;;">Last updated : WAN Show April 5, 2024</span>
+        <span style="color:  #a3a3a3;">Last updated : 	I'm In The News Again - WAN Show June 28, 2024</span>
   
 </div>
 

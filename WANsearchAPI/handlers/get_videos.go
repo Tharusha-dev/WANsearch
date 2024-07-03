@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"WANsearchAPI/utils"
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -10,7 +11,9 @@ import (
 
 func GetVideos(c *gin.Context) {
 
-	var videos []utils.Video
+	fmt.Println("hh")
+
+	var response utils.Response
 
 	query := c.Query("q")
 
@@ -19,12 +22,12 @@ func GetVideos(c *gin.Context) {
 
 	if isQuotedSearch(query) {
 
-		videos = utils.QuotedVideos(query)
+		response = utils.QuotedVideos(query)
 	} else {
-		videos = utils.Videos(query)
+		response = utils.Videos(query)
 	}
 
-	c.JSON(200, videos)
+	c.JSON(200, response)
 }
 
 func isQuotedSearch(query string) bool {
