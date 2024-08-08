@@ -22,7 +22,8 @@
     responseGot = false;
 
 
-    const response = await fetch(`https://api.wansearch.xyz/search?q=${query}`);
+    const response = await fetch(`https://api.tharusha.dev/wansearch/search?q=${query}`);
+
     if (response.ok) {
       const jsonData = await response.json();
       fdata = jsonData;
