@@ -2,6 +2,8 @@
 
 **A fan-made search engine for the WAN show podcast by LMG.** 
 
+**Currently offline, please self host**
+
 ##  Frontend
 Written in [Svelte](https://svelte.dev/).
  
@@ -22,18 +24,12 @@ The algorithm currently uses these techniques to rank documents. (in this order)
 
 - Inverted Index
 - Cosine similarity
--  Word proximity
+- Word proximity
 - Title weight (If the title includes a query term it is rated higher)
 
 When retrieving relevent documents,
 
 And uses a simple `LIKE` sql statement in [all_dialogues](https://github.com/Tharusha-dev/WANsearch/blob/main/WANsearchAPI/db/README.md#all_dialogues) table for quoted search. 
-
-## Infrastucture
-
-Frontend is hosted in Cloudflare pages.
-
-The API is running in EC2. Uses Cloudflare proxy.
 
 ## Know issues
 
